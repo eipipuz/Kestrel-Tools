@@ -1,23 +1,25 @@
 package com.eipipuz
 
-fun <T> MutableMap<T, Int>.setAsMultiSet(elements: Collection<T>) {
-    elements.forEach {
-        val previousValue = get(it) ?: 0
-        set(it, previousValue + 1)
-    }
-}
+import kotlin.math.max
 
 class MultiSet<T>() : MutableSet<T> {
-    private val items: MutableMap<T, Int> = mutableMapOf()
+    val items: MutableMap<T, Int> = mutableMapOf()
 
-    private constructor(elements: Collection<T>) : this() {
-        items.setAsMultiSet(elements)
+    constructor(elements: Collection<T>) : this() {
+        elements.forEach {
+            val previousValue = items[it] ?: 0
+            items[it] = previousValue + 1
+        }
+    }
+
+    constructor(vararg elements: T) : this() {
+        addAll(elements.toList())
     }
 
     override fun addAll(elements: Collection<T>): Boolean {
         var result = false
         elements.forEach {
-            result = result || add(it)
+            result = add(it) || result
         }
 
         return result
@@ -30,7 +32,7 @@ class MultiSet<T>() : MutableSet<T> {
     override fun removeAll(elements: Collection<T>): Boolean {
         var result = false
         elements.forEach {
-            result = result || remove(it)
+            result = remove(it) || result
         }
 
         return result
@@ -58,15 +60,15 @@ class MultiSet<T>() : MutableSet<T> {
         return true
     }
 
-    override operator fun contains(element: T) = items[element] != null
+    override operator fun contains(element: T) = items.containsKey(element)
 
     fun clone() = MultiSet(this)
 
     fun union(multiSet: MultiSet<T>): MultiSet<T> {
         val result = clone()
-        multiSet.items.forEach { k, v ->
+        multiSet.items.forEach { (k, v) ->
             val previousValue = result.items[k] ?: 0
-            result.items[k] = Math.max(previousValue, v)
+            result.items[k] = max(previousValue, v)
         }
 
         return result
@@ -86,29 +88,50 @@ class MultiSet<T>() : MutableSet<T> {
 
     override fun isEmpty() = items.isEmpty()
 
-    override fun remove(element: T): Boolean {
-        val count = items[element]
+    override fun remove(element: T): Boolean = when (val count = items[element]) {
+        null -> false
+        1 -> {
+            items.remove(element)
 
-        return when (count) {
-            null -> false
-            1 -> {
-                items.remove(element)
+            true
+        }
+        else -> {
+            items[element] = count - 1
 
-                true
+            true
+        }
+    }
+
+    override fun iterator(): MutableIterator<T> = object : MutableIterator<T> {
+        val items: MutableMap<T, Int> = this@MultiSet.items.toMutableMap()
+
+        override fun hasNext(): Boolean = items.isNotEmpty()
+
+        override fun next(): T {
+            val result = items.keys.first()
+            when (val count = items[result]) {
+                null -> throw IllegalStateException("Can't next")
+                1 -> items.remove(result)
+                else -> {
+                    items[result] = count - 1
+                }
             }
-            else -> {
-                items[element] = count - 1
 
-                true
+            return result
+        }
+
+        override fun remove() {
+            val key = items.keys.last()
+            val count = items[key] ?: throw IllegalStateException("can't remove key:$key")
+            if (count > 1) {
+                items[key] = count -1
+            } else {
+                items.remove(key)
             }
         }
     }
 
-    override fun iterator(): MutableIterator<T> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun toString() = "main.com.eipipuz.kestrel.MultiSet(items=$items)"
+    override fun toString() = "MultiSet(items=$items)"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -116,7 +139,7 @@ class MultiSet<T>() : MutableSet<T> {
 
         other as MultiSet<*>
 
-        return items != other.items
+        return items == other.items
     }
 
     override fun hashCode() = items.hashCode()
