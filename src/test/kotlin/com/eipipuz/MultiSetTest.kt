@@ -39,6 +39,7 @@ class MultiSetTest {
 
     private fun assertIterator(iterator: Iterator<Int>, vararg expected: Int) {
         val list = iterator.asSequence().toList()
+
         assertEquals(expected.toList(), list)
     }
 
@@ -56,5 +57,40 @@ class MultiSetTest {
             remove()
             remove()
         }, 1, 2)
+    }
+
+    @Test
+    fun testUnionIntersection() {
+        val multiSet = MultiSet(2, 1, 2, 1)
+        val otherMultiSet = MultiSet(1, 3, 3)
+        val unionMultiSet = MultiSet(1, 1, 2, 2, 3, 3)
+        val intersectionMultiSet = MultiSet(1)
+
+        assertEquals(unionMultiSet, multiSet.union(otherMultiSet))
+        assertEquals(intersectionMultiSet, multiSet.intersection(otherMultiSet))
+    }
+
+    @Test
+    fun testSizeAndFullSize() {
+        val multiSet = MultiSet('a', 'b', 'c', 'a')
+
+        assertEquals(3, multiSet.size)
+        assertEquals(4, multiSet.fullSize)
+    }
+
+    @Test
+    fun testClear() {
+        val originalMultiSet = MultiSet('a', 'b', 'c', 'a')
+        val clearedMultiSet = originalMultiSet.clone().apply {
+            clear()
+        }
+
+        assertEquals(3, originalMultiSet.size)
+        assertEquals(0, clearedMultiSet.size)
+
+        val otherMultiSet = MultiSet('z', 'z')
+
+        assertEquals(clearedMultiSet, clearedMultiSet.intersection(otherMultiSet))
+        assertEquals(otherMultiSet, clearedMultiSet.union(otherMultiSet))
     }
 }

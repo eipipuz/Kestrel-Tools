@@ -1,6 +1,7 @@
 package com.eipipuz
 
 import kotlin.math.max
+import kotlin.math.min
 
 class MultiSet<T>() : MutableSet<T> {
     val items: MutableMap<T, Int> = mutableMapOf()
@@ -51,6 +52,9 @@ class MultiSet<T>() : MutableSet<T> {
     override val size: Int
         get() = items.size
 
+    val fullSize: Int
+        get() = items.map { (_, count) -> count }.sum()
+
     override fun containsAll(elements: Collection<T>) = elements.all { it in this }
 
     override fun add(element: T): Boolean {
@@ -80,7 +84,7 @@ class MultiSet<T>() : MutableSet<T> {
         commonKeys.forEach {
             val leftValue = items.getValue(it)
             val rightValue = multiSet.items.getValue(it)
-            result.items[it] = Math.min(leftValue, rightValue)
+            result.items[it] = min(leftValue, rightValue)
         }
 
         return result
@@ -124,7 +128,7 @@ class MultiSet<T>() : MutableSet<T> {
             val key = items.keys.last()
             val count = items[key] ?: throw IllegalStateException("can't remove key:$key")
             if (count > 1) {
-                items[key] = count -1
+                items[key] = count - 1
             } else {
                 items.remove(key)
             }
