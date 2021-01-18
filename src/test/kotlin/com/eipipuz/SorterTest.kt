@@ -27,7 +27,6 @@ class SorterTest {
     }
 
     @Test
-    @Ignore
     fun testMergeSort() {
         assertEquals(listOf(0, 1, 2, 2, 7, 8), Sorter.mergeSort(list))
     }

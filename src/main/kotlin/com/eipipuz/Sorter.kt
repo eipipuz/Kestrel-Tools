@@ -47,7 +47,49 @@ object Sorter {
         return lessThanSorted + equalThanList + moreThanSorted
     }
 
-    fun <T> mergeSort(collection: Collection<T>): List<T> = TODO()
+    fun <T : Comparable<T>> mergeSort(collection: Collection<T>): List<T> {
+        val input = collection.toList()
+        if (input.size <= 1) return input
+
+        val middleIndex: Int = input.size / 2
+        val firstHalf = input.subList(0, middleIndex)
+        val firstSortedHalf = mergeSort(firstHalf)
+        val secondHalf = input.subList(middleIndex, input.size)
+        val secondSortedHalf = mergeSort(secondHalf)
+
+        var firstIndex = 0
+        var secondIndex = 0
+        return List(input.size) {
+            when {
+                firstIndex >= firstSortedHalf.size -> {
+                    val secondHalfElement = secondSortedHalf[secondIndex]
+                    secondIndex++
+
+                    secondHalfElement
+                }
+                secondIndex >= secondSortedHalf.size -> {
+                    val firstHalfElement = firstSortedHalf[firstIndex]
+                    firstIndex++
+
+                    firstHalfElement
+                }
+                else -> {
+                    val firstHalfElement = firstSortedHalf[firstIndex]
+                    val secondHalfElement = secondSortedHalf[secondIndex]
+
+                    if (firstHalfElement < secondHalfElement) {
+                        firstIndex++
+
+                        firstHalfElement
+                    } else {
+                        secondIndex++
+
+                        secondHalfElement
+                    }
+                }
+            }
+        }
+    }
 
     fun <T> heapSort(collection: Collection<T>): List<T> = TODO()
 
