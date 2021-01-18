@@ -37,14 +37,24 @@ class MultiSetTest {
         assertEquals(multiSet, multiSetClone)
     }
 
-    private fun assertIterator(multiSet: MultiSet<Int>, expected: List<Int>) {
-        val list = multiSet.iterator().asSequence().toList()
-        assertEquals(expected, list)
+    private fun assertIterator(iterator: Iterator<Int>, vararg expected: Int) {
+        val list = iterator.asSequence().toList()
+        assertEquals(expected.toList(), list)
     }
 
     @Test
     fun testIterator() {
         val multiSet = MultiSet(1, 2, 3, 3, 2, 3)
-        assertIterator(multiSet, listOf(1, 2, 2, 3, 3, 3))
+
+        assertIterator(multiSet.iterator(), 1, 2, 2, 3, 3, 3)
+        assertIterator(multiSet.iterator().apply {
+            remove()
+        }, 1, 2, 2, 3, 3)
+        assertIterator(multiSet.iterator().apply {
+            remove()
+            remove()
+            remove()
+            remove()
+        }, 1, 2)
     }
 }
