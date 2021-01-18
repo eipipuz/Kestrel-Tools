@@ -22,7 +22,6 @@ class SorterTest {
     }
 
     @Test
-    @Ignore
     fun testInsertSort() {
         assertEquals(listOf(0, 1, 2, 2, 7, 8), Sorter.insertSort(list))
     }

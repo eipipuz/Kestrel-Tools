@@ -51,5 +51,22 @@ object Sorter {
 
     fun <T> heapSort(collection: Collection<T>): List<T> = TODO()
 
-    fun <T> insertSort(collection: Collection<T>): List<T> = TODO()
+    fun <T : Comparable<T>> insertSort(collection: Collection<T>): List<T> {
+        val mutableList = collection.toMutableList()
+        if (collection.size <= 1) return mutableList
+
+        var previousValue = mutableList.first()
+        repeat(mutableList.size) { index ->
+            val nextValue = mutableList[index]
+            if (nextValue < previousValue) {
+                val (shouldBeIndex, _) = Searcher.binarySearchIndex(mutableList.subList(0, index), nextValue)
+
+                mutableList.removeAt(index)
+                mutableList.add(shouldBeIndex, nextValue)
+            }
+            previousValue = nextValue
+        }
+
+        return mutableList
+    }
 }
