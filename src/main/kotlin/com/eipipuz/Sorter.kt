@@ -91,7 +91,20 @@ object Sorter {
         }
     }
 
-    fun <T> heapSort(collection: Collection<T>): List<T> = TODO()
+    fun <T : Comparable<T>> heapSort(collection: Collection<T>): List<T> {
+        val inputs = collection.toMutableList()
+        if (collection.size <= 1) return inputs
+
+        val result = Heap.from(inputs).items
+        var currentIndex = result.lastIndex
+        do {
+            Heap.swap(result, 0, currentIndex)
+            Heap.siftDown(result, 0, currentIndex)
+            currentIndex--
+        } while (currentIndex > 0)
+
+        return result
+    }
 
     fun <T : Comparable<T>> insertSort(collection: Collection<T>): List<T> {
         val mutableList = collection.toMutableList()

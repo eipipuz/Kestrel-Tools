@@ -1,7 +1,6 @@
 package com.eipipuz
 
 import org.junit.Test
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 
@@ -16,7 +15,6 @@ class SorterTest {
     }
 
     @Test
-    @Ignore
     fun testHeapSort() {
         assertEquals(listOf(0, 1, 2, 2, 7, 8), Sorter.heapSort(list))
     }
