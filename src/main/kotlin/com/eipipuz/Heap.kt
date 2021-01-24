@@ -1,5 +1,7 @@
 package com.eipipuz
 
+import com.eipipuz.Swapper.swap
+
 
 class Heap<T : Comparable<T>> private constructor(internal val items: MutableList<T>) {
     companion object {
@@ -54,12 +56,6 @@ class Heap<T : Comparable<T>> private constructor(internal val items: MutableLis
                 }
             }
             items[currentIndex] = newElement
-        }
-
-        internal fun <T> swap(items: MutableList<T>, index: Int, otherIndex: Int) {
-            val temp = items[index]
-            items[index] = items[otherIndex]
-            items[otherIndex] = temp
         }
     }
 

@@ -1,5 +1,7 @@
 package com.eipipuz
 
+import com.eipipuz.Swapper.swap
+
 
 object Sorter {
     private fun <T : Comparable<T>> findPivot(list: List<T>): T {
@@ -98,7 +100,7 @@ object Sorter {
         val result = Heap.from(inputs).items
         var currentIndex = result.lastIndex
         do {
-            Heap.swap(result, 0, currentIndex)
+            swap(result, 0, currentIndex)
             Heap.siftDown(result, 0, currentIndex)
             currentIndex--
         } while (currentIndex > 0)

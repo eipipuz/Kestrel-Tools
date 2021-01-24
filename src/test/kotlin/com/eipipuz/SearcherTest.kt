@@ -3,6 +3,7 @@ package com.eipipuz
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 
 
 class SearcherTest {
@@ -49,5 +50,36 @@ class SearcherTest {
         assertBinarySearch(list, 6, 3, false)
         assertBinarySearch(list, 7, 3, true)
         assertBinarySearch(list, 11, 4, false)
+    }
+
+    private fun assertQuickSelect(list: List<Int>, nth: Int, expected: Int?) {
+        val got = Searcher.quickSelect(list.toMutableList(), nth)
+
+        if (expected != null) {
+            assertEquals(expected, got)
+        } else {
+            assertNull(got)
+        }
+    }
+
+    @Test
+    fun testQuickSelect() {
+        val list = listOf(4, 5, 2, 3, 0, 1)
+
+        assertQuickSelect(list, -1, null)
+        for (i in 0..5) {
+            assertQuickSelect(list, i, i)
+        }
+        assertQuickSelect(list, 6, null)
+    }
+
+    @Test
+    fun testQuickSelectMultipleCalls() {
+        val list = mutableListOf(4, 5, 2, 3, 0, 1)
+
+        assertQuickSelect(list, -1, null)
+        assertQuickSelect(list, 2, 2)
+        assertQuickSelect(list, 5, 5)
+        assertQuickSelect(list, 6, null)
     }
 }

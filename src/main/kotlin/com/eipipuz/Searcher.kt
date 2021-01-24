@@ -1,5 +1,7 @@
 package com.eipipuz
 
+import com.eipipuz.Swapper.swap
+
 
 object Searcher {
     internal fun <T : Comparable<T>> binarySearchIndex(list: List<T>, searchedElement: T): Pair<Int, Boolean> {
@@ -30,6 +32,75 @@ object Searcher {
                 1 -> {
                     upperIndex = middleIndex
                 }
+            }
+        }
+    }
+
+    fun <T : Comparable<T>> quickSelect(list: MutableList<T>, nth: Int): T? {
+        if (nth < 0 || nth >= list.size) return null
+
+        return quickSelect(list, nth, 0, list.lastIndex)
+    }
+
+    private tailrec fun <T : Comparable<T>> quickSelect(
+        list: MutableList<T>,
+        nth: Int,
+        startIndex: Int,
+        endIndex: Int
+    ): T {
+        if (nth !in startIndex..endIndex) {
+            throw IllegalArgumentException("nth: $nth should be [$startIndex, $endIndex]")
+        }
+        if (startIndex == endIndex) return list[startIndex]
+
+        val pivotIndex = findPivotIndex(list, startIndex, endIndex)
+        val pivot = list[pivotIndex]
+
+        swap(list, pivotIndex, endIndex)
+
+        var leftIndex = startIndex
+        var rightIndex = endIndex - 1
+        var lastSwapIndex = leftIndex - 1 // This will be the value if all values are bigger than pivot
+
+        while (leftIndex < rightIndex) {
+            val left = list[leftIndex]
+            if (left < pivot) {
+                leftIndex++
+            } else {
+                swap(list, leftIndex, rightIndex)
+                lastSwapIndex = leftIndex
+                rightIndex--
+            }
+        }
+
+        val newPivotIndex = lastSwapIndex + 1
+        swap(list, newPivotIndex, endIndex)
+
+        return when {
+            nth == newPivotIndex -> list[nth]
+            nth < newPivotIndex -> quickSelect(list, nth, startIndex, newPivotIndex - 1)
+            nth > newPivotIndex -> quickSelect(list, nth, newPivotIndex + 1, endIndex)
+            else -> throw IllegalStateException("Impossible scenario between nth:$nth and newPivotIndex:$newPivotIndex")
+        }
+    }
+
+    private fun <T : Comparable<T>> findPivotIndex(list: List<T>, startIndex: Int, endIndex: Int): Int {
+        val start = list[startIndex]
+        val end = list[endIndex]
+        val middleIndex: Int = startIndex + (endIndex - startIndex) / 2
+        val middle = list[middleIndex]
+
+        return if (start <= end) {
+            if (start <= middle) {
+                if (middle <= end) middleIndex else endIndex
+            } else {
+                startIndex
+            }
+        } else {
+            if (end <= middle) {
+                if (middle <= start) middleIndex else startIndex
+            } else {
+                endIndex
             }
         }
     }
