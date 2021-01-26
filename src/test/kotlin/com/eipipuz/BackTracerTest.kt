@@ -10,7 +10,7 @@ class BackTracerTest {
         val eightQueensSolver = EightQueensSolver()
         val board = eightQueensSolver.findSolution()
         assertNotNull(board)
-        println(board.toNiceString())
+//        println(board.toNiceString())
         assertEquals(8, board.queenNumber)
     }
 
@@ -25,11 +25,11 @@ class BackTracerTest {
     fun testEightQueenSolver() {
         val solver = EightQueensSolver()
         val subStates = solver.subStates.toList()
-        printSubStates(subStates)
+//        printSubStates(subStates)
         assertEquals(64, subStates.size)
 
         val subState__2_3 = subStates[2 * 8 + 3] as EightQueensSolver
-        printSubStates(listOf(subState__2_3))
+//        printSubStates(listOf(subState__2_3))
         assertNull(subState__2_3.solution)
         assertEquals(BackTracer.SolutionStatus.ONGOING, subState__2_3.solutionStatus)
 
@@ -38,7 +38,7 @@ class BackTracerTest {
         assertEquals(1, board__3_4.grid[2][3])
 
         val subSubStates__2_3 = subState__2_3.subStates.toList()
-        printSubStates(subSubStates__2_3)
+//        printSubStates(subSubStates__2_3)
         // Total - row - column - correlated - anti-related
         assertEquals(64 - 8 - 7 - 5 - 6, subSubStates__2_3.size)
     }
