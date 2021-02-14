@@ -129,4 +129,30 @@ object Searcher {
             graphObserver.afterVertexFound(currentValue)
         }
     }
+
+    fun <T> depthFirstSearch(graph: Graph<T>, initialValue: T, graphObserver: GraphObserver<T>) {
+        val initialVertexId = graph.valueToVertexId[initialValue] ?: throw IllegalArgumentException("Unknown value($initialValue)")
+
+        val vertexIdStack = Stack(initialVertexId)
+        val addedVertexIds = mutableSetOf(initialVertexId)
+
+        while (!vertexIdStack.isEmpty()) {
+            val currentVertexId = vertexIdStack.getLast() ?: return
+
+            val currentValue = graph.vertexIdToValue[currentVertexId]!!
+
+            graphObserver.onVertexFound(currentValue)
+            val edges = graph.vertexIdToEdges[currentVertexId]?.reversed() ?: emptyList()
+            for ((vertexId, weight) in edges) {
+                if(vertexId in addedVertexIds) continue
+
+                vertexIdStack.add(vertexId)
+                addedVertexIds.add(vertexId)
+
+                val toValue = graph.vertexIdToValue[currentVertexId]!!
+                graphObserver.onEdge(currentValue, toValue, weight)
+            }
+            graphObserver.afterVertexFound(currentValue)
+        }
+    }
 }

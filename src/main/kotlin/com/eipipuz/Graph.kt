@@ -73,6 +73,7 @@ class Graph<T>(
     val valueToVertexId: Map<T, VertexId>,
     val numEdges: Int,
     val isDirected: Boolean
+    // TODO: Add isUnweighted
 )
 
 data class EdgeToVertex(val vertexId: VertexId, val weight: Int)

@@ -113,4 +113,35 @@ class SearcherTest {
         val expectedVertices = listOf(1, 2, 5, 6, 3, 4)
         assertEquals(expectedVertices, gotVertices.toList())
     }
+
+    @Test
+    fun testDFS() {
+        val someGraph = graph<Int>(isDirected = false) {
+            vertex(1) {
+                vertex(2) {
+                    vertex(3) {
+                        vertex(4) {
+                            vertex(5) {
+                                reference(2)
+                                reference(1)
+                            }
+                        }
+                    }
+                }
+                vertex(6)
+            }
+        }
+
+        val gotVertices = mutableListOf<Int>()
+        val graphObserver = object : SimpleGraphObserver<Int>() {
+            override fun onVertexFound(value: Int) {
+                gotVertices.add(value)
+            }
+        }
+
+        Searcher.depthFirstSearch(someGraph, 1, graphObserver)
+
+        val expectedVertices = listOf(1, 2, 3, 4, 5, 6)
+        assertEquals(expectedVertices, gotVertices.toList())
+    }
 }
