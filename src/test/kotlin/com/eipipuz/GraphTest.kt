@@ -14,7 +14,8 @@ class GraphTest {
     ) {
         assertEquals(expectedIsDirected, graph.isDirected)
         assertEquals(expectedNumEdges, graph.numEdges, "Number of edges")
-        assertEquals(expectedValues, graph.vertexToValue.values.toSet(), "Values")
+        assertEquals(expectedValues, graph.vertexIdToValue.values.toSet(), "Values")
+        assertEquals(expectedValues, graph.valueToVertexId.keys, "Keys")
     }
 
     @Test
@@ -117,6 +118,21 @@ class GraphTest {
         }
 
         assertGraph(nonDirected, false, 2, setOf('a', 'b'))
+    }
+
+    @Test
+    fun test3VerticesNonDirected() {
+        val nonDirected = graph<Char>(isDirected = false) {
+            vertex('a') {
+                vertex('b') {
+                    vertex('c') {
+                        reference('a')
+                    }
+                }
+            }
+        }
+
+        assertGraph(nonDirected, false, 6, setOf('a', 'b', 'c'))
     }
 
     @Test

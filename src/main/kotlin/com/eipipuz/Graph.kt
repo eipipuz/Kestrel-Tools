@@ -21,6 +21,7 @@ class GraphBuilder<T>(private val isDirected: Boolean) {
         baseVertexId = vertexId
         vertexToValue[vertexId] = value
         valueToVertexId[value] = vertexId
+        vertexToEdges[vertexId] = mutableListOf()
 
         previousVertexId?.let {
             addEdge(it, vertexId, 1)
@@ -46,25 +47,30 @@ class GraphBuilder<T>(private val isDirected: Boolean) {
         }
 
         addEdge(fromVertexId, toVertexId, 1)
+
+        if (!isDirected) {
+            addEdge(toVertexId, fromVertexId, 1)
+        }
     }
 
     private fun addEdge(fromVertexId: VertexId, toVertexId: VertexId, weight: Int) {
         if (weight <= 0) throw IllegalStateException("Weight($weight) needs to be positive")
 
-        val edges = vertexToEdges.getOrPut(fromVertexId) { mutableListOf() }
+        val edges = vertexToEdges[fromVertexId]!!
         edges.add(EdgeToVertex(toVertexId, weight))
 
         numEdges++
     }
 
-    fun build(): Graph<T> = Graph(vertexToEdges, vertexToValue, numEdges, isDirected)
+    fun build(): Graph<T> = Graph(vertexToEdges, vertexToValue, valueToVertexId, numEdges, isDirected)
 }
 
 typealias GraphCallback<T> = GraphBuilder<T>.() -> Unit
 
-data class Graph<T>(
-    val vertexToEdges: Map<VertexId, List<EdgeToVertex>>,
-    val vertexToValue: Map<VertexId, T>,
+class Graph<T>(
+    val vertexIdToEdges: Map<VertexId, List<EdgeToVertex>>,
+    val vertexIdToValue: Map<VertexId, T>,
+    val valueToVertexId: Map<T, VertexId>,
     val numEdges: Int,
     val isDirected: Boolean
 )
@@ -72,3 +78,19 @@ data class Graph<T>(
 data class EdgeToVertex(val vertexId: VertexId, val weight: Int)
 
 inline class VertexId(val int: Int)
+
+interface GraphObserver<T> {
+    fun onVertexFound(value: T)
+
+    fun onEdge(fromValue: T, toValue: T, weight: Int)
+
+    fun afterVertexFound(value: T)
+}
+
+open class SimpleGraphObserver<T> : GraphObserver<T> {
+    override fun onVertexFound(value: T) {}
+
+    override fun onEdge(fromValue: T, toValue: T, weight: Int) {}
+
+    override fun afterVertexFound(value: T) {}
+}

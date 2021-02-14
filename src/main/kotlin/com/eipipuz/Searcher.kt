@@ -104,4 +104,29 @@ object Searcher {
             }
         }
     }
+
+    fun <T> breathFirstSearch(graph: Graph<T>, initialValue: T, graphObserver: GraphObserver<T>) {
+        val initialVertexId = graph.valueToVertexId[initialValue] ?: throw IllegalArgumentException("Unknown value($initialValue)")
+
+        val vertexIdQueue = Queue(initialVertexId)
+        val addedVertexIds = mutableSetOf(initialVertexId)
+
+        while (true) {
+            val currentVertexId = vertexIdQueue.getFirst() ?: return
+
+            val currentValue = graph.vertexIdToValue[currentVertexId]!!
+
+            graphObserver.onVertexFound(currentValue)
+            val edges = graph.vertexIdToEdges[currentVertexId] ?: emptyList()
+            for ((vertexId, weight) in edges) {
+                if(vertexId in addedVertexIds) continue
+
+                vertexIdQueue.add(vertexId)
+                addedVertexIds.add(vertexId)
+                val toValue = graph.vertexIdToValue[currentVertexId]!!
+                graphObserver.onEdge(currentValue, toValue, weight)
+            }
+            graphObserver.afterVertexFound(currentValue)
+        }
+    }
 }

@@ -82,4 +82,35 @@ class SearcherTest {
         assertQuickSelect(list, 5, 5)
         assertQuickSelect(list, 6, null)
     }
+
+    @Test
+    fun testBFS() {
+        val someGraph = graph<Int>(isDirected = false) {
+            vertex(1) {
+                vertex(2) {
+                    vertex(3) {
+                        vertex(4) {
+                            vertex(5) {
+                                reference(2)
+                                reference(1)
+                            }
+                        }
+                    }
+                }
+                vertex(6)
+            }
+        }
+
+        val gotVertices = mutableListOf<Int>()
+        val graphObserver = object : SimpleGraphObserver<Int>() {
+            override fun onVertexFound(value: Int) {
+                gotVertices.add(value)
+            }
+        }
+
+        Searcher.breathFirstSearch(someGraph, 1, graphObserver)
+
+        val expectedVertices = listOf(1, 2, 5, 6, 3, 4)
+        assertEquals(expectedVertices, gotVertices.toList())
+    }
 }
