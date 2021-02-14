@@ -14,8 +14,7 @@ class GraphTest {
     ) {
         assertEquals(expectedIsDirected, graph.isDirected)
         assertEquals(expectedNumEdges, graph.numEdges, "Number of edges")
-        assertEquals(expectedValues, graph.vertexIdToValue.values.toSet(), "Values")
-        assertEquals(expectedValues, graph.valueToVertexId.keys, "Keys")
+        assertEquals(expectedValues, graph.valueToEdges.keys.toSet(), "Values")
     }
 
     @Test

@@ -106,51 +106,49 @@ object Searcher {
     }
 
     fun <T> breathFirstSearch(graph: Graph<T>, initialValue: T, graphObserver: GraphObserver<T>) {
-        val initialVertexId = graph.valueToVertexId[initialValue] ?: throw IllegalArgumentException("Unknown value($initialValue)")
+        if (initialValue !in graph.valueToEdges.keys) {
+            throw IllegalArgumentException("Unknown value($initialValue)")
+        }
 
-        val vertexIdQueue = Queue(initialVertexId)
-        val addedVertexIds = mutableSetOf(initialVertexId)
+        val valueQueue = Queue(initialValue)
+        val addedValues = mutableSetOf(initialValue)
 
         while (true) {
-            val currentVertexId = vertexIdQueue.getFirst() ?: return
-
-            val currentValue = graph.vertexIdToValue[currentVertexId]!!
+            val currentValue = valueQueue.getFirst() ?: return
 
             graphObserver.onVertexFound(currentValue)
-            val edges = graph.vertexIdToEdges[currentVertexId] ?: emptyList()
-            for ((vertexId, weight) in edges) {
-                if(vertexId in addedVertexIds) continue
+            val edges = graph.valueToEdges[currentValue] ?: emptyList()
+            for ((otherValue, weight) in edges) {
+                if(otherValue in addedValues) continue
 
-                vertexIdQueue.add(vertexId)
-                addedVertexIds.add(vertexId)
-                val toValue = graph.vertexIdToValue[currentVertexId]!!
-                graphObserver.onEdge(currentValue, toValue, weight)
+                valueQueue.add(otherValue)
+                addedValues.add(otherValue)
+                graphObserver.onEdge(currentValue, otherValue, weight)
             }
             graphObserver.afterVertexFound(currentValue)
         }
     }
 
     fun <T> depthFirstSearch(graph: Graph<T>, initialValue: T, graphObserver: GraphObserver<T>) {
-        val initialVertexId = graph.valueToVertexId[initialValue] ?: throw IllegalArgumentException("Unknown value($initialValue)")
+        if (initialValue !in graph.valueToEdges.keys) {
+            throw IllegalArgumentException("Unknown value($initialValue)")
+        }
 
-        val vertexIdStack = Stack(initialVertexId)
-        val addedVertexIds = mutableSetOf(initialVertexId)
+        val vertexIdStack = Stack(initialValue)
+        val addedValues = mutableSetOf(initialValue)
 
         while (!vertexIdStack.isEmpty()) {
-            val currentVertexId = vertexIdStack.getLast() ?: return
-
-            val currentValue = graph.vertexIdToValue[currentVertexId]!!
+            val currentValue = vertexIdStack.getLast() ?: return
 
             graphObserver.onVertexFound(currentValue)
-            val edges = graph.vertexIdToEdges[currentVertexId]?.reversed() ?: emptyList()
-            for ((vertexId, weight) in edges) {
-                if(vertexId in addedVertexIds) continue
+            val edges = graph.valueToEdges[currentValue]?.reversed() ?: emptyList()
+            for ((otherValue, weight) in edges) {
+                if(otherValue in addedValues) continue
 
-                vertexIdStack.add(vertexId)
-                addedVertexIds.add(vertexId)
+                vertexIdStack.add(otherValue)
+                addedValues.add(otherValue)
 
-                val toValue = graph.vertexIdToValue[currentVertexId]!!
-                graphObserver.onEdge(currentValue, toValue, weight)
+                graphObserver.onEdge(currentValue, otherValue, weight)
             }
             graphObserver.afterVertexFound(currentValue)
         }
