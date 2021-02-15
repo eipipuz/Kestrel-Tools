@@ -144,4 +144,15 @@ class SearcherTest {
         val expectedVertices = listOf(1, 2, 3, 4, 5, 6)
         assertEquals(expectedVertices, gotVertices.toList())
     }
+
+    private fun assertLongestCommonSublist(string1: String, string2: String, expectedString: String) {
+        val gotSublist = Searcher.findLongestCommonSublist(string1.toList(), string2.toList())
+        assertEquals(expectedString, gotSublist.joinToString(""))
+    }
+
+    @Test
+    fun testFindLongestCommonSublist() {
+        assertLongestCommonSublist("Hello world!", "98765", "")
+        assertLongestCommonSublist("1234567", "200234056", "234")
+    }
 }

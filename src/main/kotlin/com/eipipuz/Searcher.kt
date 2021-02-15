@@ -119,7 +119,7 @@ object Searcher {
             graphObserver.onVertexFound(currentValue)
             val edges = graph.valueToEdges[currentValue] ?: emptyList()
             for ((otherValue, weight) in edges) {
-                if(otherValue in addedValues) continue
+                if (otherValue in addedValues) continue
 
                 valueQueue.add(otherValue)
                 addedValues.add(otherValue)
@@ -143,7 +143,7 @@ object Searcher {
             graphObserver.onVertexFound(currentValue)
             val edges = graph.valueToEdges[currentValue]?.reversed() ?: emptyList()
             for ((otherValue, weight) in edges) {
-                if(otherValue in addedValues) continue
+                if (otherValue in addedValues) continue
 
                 vertexIdStack.add(otherValue)
                 addedValues.add(otherValue)
@@ -152,5 +152,38 @@ object Searcher {
             }
             graphObserver.afterVertexFound(currentValue)
         }
+    }
+
+    fun <T> findLongestCommonSublist(list: List<T>, otherList: List<T>): List<T> {
+        if (list.isEmpty()) return emptyList()
+        if (otherList.isEmpty()) return emptyList()
+
+        val matrix = Array(list.size) { Array(otherList.size) { 0 } }
+        var maxLength = 0
+        var endIndex = 0
+        for (index in list.indices) {
+            for (otherIndex in otherList.indices) {
+                if (list[index] != otherList[otherIndex]) {
+                    continue
+                }
+
+                val previousLength = if (index == 0 || otherIndex == 0) {
+                    0
+                } else {
+                    matrix[index - 1][otherIndex - 1]
+                }
+                val newLength = 1 + previousLength
+                matrix[index][otherIndex] = newLength
+
+                if (newLength > maxLength) {
+                    maxLength = newLength
+                    endIndex = index
+                }
+            }
+        }
+
+        val startIndex = endIndex - maxLength + 1
+
+        return list.subList(startIndex, startIndex + maxLength)
     }
 }
