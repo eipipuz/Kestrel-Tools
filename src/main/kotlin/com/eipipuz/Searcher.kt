@@ -1,6 +1,8 @@
 package com.eipipuz
 
 import com.eipipuz.Swapper.swap
+import com.eipipuz.graph.Graph
+import com.eipipuz.graph.GraphObserver
 
 
 object Searcher {
@@ -114,14 +116,14 @@ object Searcher {
         val addedValues = mutableSetOf(initialValue)
 
         while (true) {
-            val currentValue = valueQueue.getFirst() ?: return
+            val currentValue = valueQueue.dequeue() ?: return
 
             graphObserver.onVertexFound(currentValue)
             val edges = graph.valueToEdges[currentValue] ?: emptyList()
             for ((otherValue, weight) in edges) {
                 if (otherValue in addedValues) continue
 
-                valueQueue.add(otherValue)
+                valueQueue.enqueue(otherValue)
                 addedValues.add(otherValue)
                 graphObserver.onEdge(currentValue, otherValue, weight)
             }
@@ -138,14 +140,14 @@ object Searcher {
         val addedValues = mutableSetOf(initialValue)
 
         while (!vertexIdStack.isEmpty()) {
-            val currentValue = vertexIdStack.getLast() ?: return
+            val currentValue = vertexIdStack.pop() ?: return
 
             graphObserver.onVertexFound(currentValue)
             val edges = graph.valueToEdges[currentValue]?.reversed() ?: emptyList()
             for ((otherValue, weight) in edges) {
                 if (otherValue in addedValues) continue
 
-                vertexIdStack.add(otherValue)
+                vertexIdStack.push(otherValue)
                 addedValues.add(otherValue)
 
                 graphObserver.onEdge(currentValue, otherValue, weight)

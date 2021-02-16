@@ -44,6 +44,11 @@ A fast implementation is more important than a lean one.
 
 ### HeapSort
 
+### Topological
+At this time we are using a MaxHeap instead of a general Queue.
+Using a Queue returns values in an almost arbitrary way.
+Also, this way we could have a job schedule thing with priorities.
+
 ## Search
 
 ### Quick Select

@@ -2,13 +2,23 @@ package com.eipipuz
 
 
 class Queue<T>(vararg initialValues: T) {
+    companion object {
+        fun <T> from(collection: Collection<T>): Queue<T> {
+            return Queue<T>().apply {
+                collection.forEach {
+                    enqueue(it)
+                }
+            }
+        }
+    }
+
     private val values = initialValues.toMutableList()
 
-    fun add(value: T) {
+    fun enqueue(value: T) {
         values.add(value)
     }
 
-    fun getFirst(): T? {
+    fun dequeue(): T? {
         if (values.isEmpty()) return null
 
         val first = values.first()
@@ -18,4 +28,6 @@ class Queue<T>(vararg initialValues: T) {
     }
 
     fun isEmpty() = values.isEmpty()
+
+    fun toList(): List<T> = values.toList()
 }

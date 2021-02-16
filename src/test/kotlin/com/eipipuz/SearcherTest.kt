@@ -1,5 +1,7 @@
 package com.eipipuz
 
+import com.eipipuz.graph.SimpleGraphObserver
+import com.eipipuz.graph.graph
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

@@ -1,11 +1,11 @@
-package com.eipipuz
+package com.eipipuz.graph
 
 fun <T> graph(isDirected: Boolean = true, callback: GraphCallback<T>): Graph<T> = GraphBuilder<T>(isDirected)
     .apply(callback)
     .build()
 
 class GraphBuilder<T>(private val isDirected: Boolean) {
-    private val valueToEdges = mutableMapOf<T, MutableList<EdgeToVertex<T>>>()
+    private val valueToEdges = mutableMapOf<T, MutableSet<EdgeToVertex<T>>>()
     private var numEdges = 0
     private var baseValue: T? = null
 
@@ -17,7 +17,7 @@ class GraphBuilder<T>(private val isDirected: Boolean) {
         val previousValue = baseValue
 
         baseValue = value
-        valueToEdges[value] = mutableListOf()
+        valueToEdges[value] = mutableSetOf()
 
         previousValue?.let {
             addEdge(it, value, 1)
@@ -63,28 +63,3 @@ class GraphBuilder<T>(private val isDirected: Boolean) {
 }
 
 typealias GraphCallback<T> = GraphBuilder<T>.() -> Unit
-
-class Graph<T>(
-    val valueToEdges: Map<T, List<EdgeToVertex<T>>>,
-    val numEdges: Int,
-    val isDirected: Boolean
-    // TODO: Add isUnweighted
-)
-
-data class EdgeToVertex<T>(val otherValue: T, val weight: Int)
-
-interface GraphObserver<T> {
-    fun onVertexFound(value: T)
-
-    fun onEdge(fromValue: T, toValue: T, weight: Int)
-
-    fun afterVertexFound(value: T)
-}
-
-open class SimpleGraphObserver<T> : GraphObserver<T> {
-    override fun onVertexFound(value: T) {}
-
-    override fun onEdge(fromValue: T, toValue: T, weight: Int) {}
-
-    override fun afterVertexFound(value: T) {}
-}

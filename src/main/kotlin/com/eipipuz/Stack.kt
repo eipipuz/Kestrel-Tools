@@ -4,11 +4,11 @@ package com.eipipuz
 class Stack<T>(vararg initialValues: T) {
     private val values = initialValues.toMutableList()
 
-    fun add(value: T) {
+    fun push(value: T) {
         values.add(value)
     }
 
-    fun getLast(): T? {
+    fun pop(): T? {
         if (values.isEmpty()) return null
 
         val last = values.last()
@@ -18,4 +18,6 @@ class Stack<T>(vararg initialValues: T) {
     }
 
     fun isEmpty() = values.isEmpty()
+
+    fun toList(): List<T> = values.reversed()
 }

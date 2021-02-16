@@ -1,4 +1,4 @@
-package com.eipipuz
+package com.eipipuz.graph
 
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -148,6 +148,57 @@ class GraphTest {
         }
 
         assertGraph(twoVertices, true, 4, setOf('a', 'b', 'c', 'd'))
+    }
+
+    private val jobGraph = graph<Int> {
+        vertex(5) {
+            vertex(11) {
+                vertex(2)
+                vertex(9)
+                vertex(10)
+            }
+        }
+        vertex(7) {
+            reference(11)
+            vertex(8) {
+                reference(9)
+            }
+        }
+        vertex(3) {
+            reference(8)
+            reference(10)
+        }
+    }
+
+    @Test
+    fun testInitialValues() {
+        assertEquals(setOf(5, 7, 3), jobGraph.initialValues)
+    }
+
+    @Test
+    fun testInvertedGraph() {
+        val invertedGraph = graph<Int> {
+            vertex(2) {
+                vertex(11) {
+                    vertex(5)
+                    vertex(7)
+                }
+            }
+            vertex(9) {
+                reference(11)
+                vertex(8) {
+                    reference(7)
+                    vertex(3)
+                }
+            }
+            vertex(10) {
+                reference(11)
+                reference(3)
+            }
+        }
+
+        val gotGraph = jobGraph.toInvertedGraph()
+        assertEquals(invertedGraph, gotGraph)
     }
 }
 

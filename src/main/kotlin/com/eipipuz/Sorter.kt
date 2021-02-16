@@ -1,6 +1,7 @@
 package com.eipipuz
 
 import com.eipipuz.Swapper.swap
+import com.eipipuz.graph.Graph
 
 
 object Sorter {
@@ -125,5 +126,36 @@ object Sorter {
         }
 
         return mutableList
+    }
+
+    fun <T : Comparable<T>> topologicalSort(graph: Graph<T>): List<T> {
+        val valueToIncomingCount = graph.valueToIncomingCount.toMutableMap()
+        val initialValues = valueToIncomingCount.filter { it.value == 0 }.keys
+        var valuesToProcess = graph.valueToEdges.keys.size
+
+        val heap = Heap.from(initialValues)
+        val sortedList = mutableListOf<T>()
+
+        while (!heap.isEmpty) {
+            val value = heap.pop()!!
+            sortedList.add(value)
+            valuesToProcess--
+
+            val edges = graph.valueToEdges.getOrDefault(value, emptySet())
+            for ((otherValue, _) in edges) {
+                val count = valueToIncomingCount[otherValue]!!
+                if (count == 1) {
+                    heap.push(otherValue)
+                } else {
+                    valueToIncomingCount[otherValue] = count - 1
+                }
+            }
+        }
+
+        if (valuesToProcess > 0) {
+            throw UnsupportedOperationException("Topological sorting only works for DAGs.")
+        }
+
+        return sortedList
     }
 }
