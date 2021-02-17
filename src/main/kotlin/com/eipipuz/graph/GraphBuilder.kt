@@ -9,26 +9,30 @@ class GraphBuilder<T>(private val isDirected: Boolean) {
     private var numEdges = 0
     private var baseValue: T? = null
 
+    var weight: Int = 1
+
     fun vertex(value: T, callback: GraphCallback<T> = {}) {
         require(value !in valueToEdges.keys) {
             "Value($value) can't be added to graph twice as a vertex. Try using [reference]."
         }
 
         val previousValue = baseValue
+        val previousWeight = weight
 
         baseValue = value
         valueToEdges[value] = mutableSetOf()
 
         previousValue?.let {
-            addEdge(it, value, 1)
+            addEdge(it, value, weight)
 
             if (!isDirected) {
-                addEdge(value, it, 1)
+                addEdge(value, it, weight)
             }
         }
 
         callback()
 
+        weight = previousWeight
         baseValue = previousValue
     }
 
@@ -43,10 +47,10 @@ class GraphBuilder<T>(private val isDirected: Boolean) {
             throw IllegalArgumentException("There's already an edge for value($toValue)")
         }
 
-        addEdge(fromValue, toValue, 1)
+        addEdge(fromValue, toValue, weight)
 
         if (!isDirected) {
-            addEdge(toValue, fromValue, 1)
+            addEdge(toValue, fromValue, weight)
         }
     }
 

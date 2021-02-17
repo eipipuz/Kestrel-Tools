@@ -6,11 +6,11 @@ import kotlin.test.assertEquals
 
 class GraphTest {
 
-    private fun assertGraph(
-        graph: Graph<Char>,
+    private fun <T> assertGraph(
+        graph: Graph<T>,
         expectedIsDirected: Boolean,
         expectedNumEdges: Int,
-        expectedValues: Set<Char>
+        expectedValues: Set<T>
     ) {
         assertEquals(expectedIsDirected, graph.isDirected)
         assertEquals(expectedNumEdges, graph.numEdges, "Number of edges")
@@ -173,6 +173,40 @@ class GraphTest {
     @Test
     fun testInitialValues() {
         assertEquals(setOf(5, 7, 3), jobGraph.initialValues)
+    }
+
+    private fun <T> assertWeightsBetweenVertices(graph: Graph<T>, value1: T, value2: T, expectedWeight: Int) {
+        val edge1 = graph.valueToEdges[value1]?.find { it.otherValue == value2 }!!
+        assertEquals(expectedWeight, edge1.weight)
+        val edge2 = graph.valueToEdges[value2]?.find { it.otherValue == value1 }!!
+        assertEquals(expectedWeight, edge2.weight)
+    }
+
+    @Test
+    fun testWeightsInGraph() {
+        val weightedGraph = graph<Char>(isDirected = false) {
+            vertex('a') {
+                vertex('b')
+            }
+            weight = 2
+            vertex('c') {
+                vertex('d')
+            }
+
+            weight = 5
+            vertex('e') {
+                weight = 3
+                vertex('f')
+            }
+            vertex('g') {
+                vertex('h')
+            }
+        }
+
+        assertWeightsBetweenVertices(weightedGraph, 'a', 'b', 1)
+        assertWeightsBetweenVertices(weightedGraph, 'c', 'd', 2)
+        assertWeightsBetweenVertices(weightedGraph, 'e', 'f', 3)
+        assertWeightsBetweenVertices(weightedGraph, 'g', 'h', 5)
     }
 
     @Test
