@@ -6,10 +6,10 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 
-class HeapTest {
+class MaxHeapTest {
     @Test
     fun testEmptyHeap() {
-        val heap = Heap.createEmpty<Int>()
+        val heap = MaxHeap.createEmpty<Int>()
 
         assertEquals(0, heap.size)
         assertTrue(heap.isEmpty)
@@ -18,14 +18,14 @@ class HeapTest {
 
     @Test
     fun testFromCollection() {
-        val heap = Heap.from(1, 6, 3, 5, 8, 4, 7, 2)
+        val heap = MaxHeap.from(1, 6, 3, 5, 8, 4, 7, 2)
 
         assertEquals(mutableListOf(8, 6, 7, 5, 1, 4, 3, 2), heap.items)
     }
 
     @Test
     fun testPush() {
-        val heap = Heap.createEmpty<Int>().apply {
+        val heap = MaxHeap.createEmpty<Int>().apply {
             push(1)
             push(6)
             push(3)
@@ -41,7 +41,7 @@ class HeapTest {
 
     @Test
     fun testPop() {
-        val heap = Heap.from(1, 6, 3, 5, 8, 4, 7, 2)
+        val heap = MaxHeap.from(1, 6, 3, 5, 8, 4, 7, 2)
 
         val list = mutableListOf<Int>()
         while (!heap.isEmpty) {

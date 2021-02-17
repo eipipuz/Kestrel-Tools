@@ -98,11 +98,11 @@ object Sorter {
         val inputs = collection.toMutableList()
         if (collection.size <= 1) return inputs
 
-        val result = Heap.from(inputs).items
+        val result = MaxHeap.from(inputs).items
         var currentIndex = result.lastIndex
         do {
             swap(result, 0, currentIndex)
-            Heap.siftDown(result, 0, currentIndex)
+            MaxHeap.siftDown(result, 0, currentIndex)
             currentIndex--
         } while (currentIndex > 0)
 
@@ -133,7 +133,7 @@ object Sorter {
         val initialValues = valueToIncomingCount.filter { it.value == 0 }.keys
         var valuesToProcess = graph.valueToEdges.keys.size
 
-        val heap = Heap.from(initialValues)
+        val heap = MaxHeap.from(initialValues)
         val sortedList = mutableListOf<T>()
 
         while (!heap.isEmpty) {

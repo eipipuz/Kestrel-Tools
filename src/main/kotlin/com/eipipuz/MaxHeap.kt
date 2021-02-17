@@ -3,12 +3,12 @@ package com.eipipuz
 import com.eipipuz.Swapper.swap
 
 
-class Heap<T : Comparable<T>> private constructor(internal val items: MutableList<T>) {
+class MaxHeap<T : Comparable<T>> private constructor(internal val items: MutableList<T>) {
     companion object {
-        fun <T : Comparable<T>> from(vararg elements: T): Heap<T> = from(elements.toList())
+        fun <T : Comparable<T>> from(vararg elements: T): MaxHeap<T> = from(elements.toList())
 
         @Suppress("MemberVisibilityCanBePrivate")
-        fun <T : Comparable<T>> from(collection: Collection<T>): Heap<T> {
+        fun <T : Comparable<T>> from(collection: Collection<T>): MaxHeap<T> {
             val items = collection.toMutableList()
 
             var index: Int = (items.size - 1) / 2
@@ -17,10 +17,10 @@ class Heap<T : Comparable<T>> private constructor(internal val items: MutableLis
                 index--
             } while (index >= 0)
 
-            return Heap(items)
+            return MaxHeap(items)
         }
 
-        fun <T : Comparable<T>> createEmpty(): Heap<T> = Heap(mutableListOf())
+        fun <T : Comparable<T>> createEmpty(): MaxHeap<T> = MaxHeap(mutableListOf())
 
         internal tailrec fun <T : Comparable<T>> siftDown(items: MutableList<T>, index: Int, size: Int) {
             val leftIndex = 2 * index + 1
