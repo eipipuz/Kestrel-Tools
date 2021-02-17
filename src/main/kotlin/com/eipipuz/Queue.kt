@@ -3,9 +3,9 @@ package com.eipipuz
 
 class Queue<T>(vararg initialValues: T) {
     companion object {
-        fun <T> from(collection: Collection<T>): Queue<T> {
+        fun <T> from(list: List<T>): Queue<T> {
             return Queue<T>().apply {
-                collection.forEach {
+                list.forEach {
                     enqueue(it)
                 }
             }

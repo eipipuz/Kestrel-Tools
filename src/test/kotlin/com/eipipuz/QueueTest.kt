@@ -27,6 +27,13 @@ class QueueTest {
     }
 
     @Test
+    fun testFromCollection() {
+        val queue = Queue.from(listOf(1, 3))
+
+        assertEquals(listOf(1, 3), queue.toList())
+    }
+
+    @Test
     fun testIsEmpty() {
         assertTrue(Queue<String>().isEmpty())
         assertFalse(Queue("value").isEmpty())
