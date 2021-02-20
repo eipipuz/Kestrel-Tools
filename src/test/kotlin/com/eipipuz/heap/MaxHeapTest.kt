@@ -1,4 +1,4 @@
-package com.eipipuz
+package com.eipipuz.heap
 
 import org.junit.Test
 import kotlin.test.assertEquals

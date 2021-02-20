@@ -1,4 +1,4 @@
-package com.eipipuz
+package com.eipipuz.heap
 
 import com.eipipuz.Swapper.swap
 

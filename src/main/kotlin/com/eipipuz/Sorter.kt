@@ -2,6 +2,7 @@ package com.eipipuz
 
 import com.eipipuz.Swapper.swap
 import com.eipipuz.graph.Graph
+import com.eipipuz.heap.MaxHeap
 
 
 object Sorter {

@@ -23,6 +23,8 @@ A fast implementation is more important than a lean one.
 # Data Structures
 
 ## Heap
+There's both MaxHeap and MinHeap. Decided against having only 1 class with a way to pick modes
+because that would interfere with __Readable__ for now.
 
 ## Stack
 
