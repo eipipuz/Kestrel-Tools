@@ -61,6 +61,9 @@ Also, this way we could have a job schedule thing with priorities.
 
 ### Longest Common Sublist
 
+### Minimum Spanning Tree
+At this point, we only have Prim's algorithm. Picked over Kruskal's because it seems more natural.
+
 ## Back Trace
 
 # Problems

@@ -3,7 +3,7 @@ package com.eipipuz.graph
 interface GraphObserver<T> {
     fun onVertexFound(value: T)
 
-    fun onEdge(fromValue: T, toValue: T, weight: Int)
+    fun onEdge(sourceValue: T, destinationValue: T, weight: Int)
 
     fun afterVertexFound(value: T)
 }
@@ -11,7 +11,7 @@ interface GraphObserver<T> {
 open class SimpleGraphObserver<T> : GraphObserver<T> {
     override fun onVertexFound(value: T) {}
 
-    override fun onEdge(fromValue: T, toValue: T, weight: Int) {}
+    override fun onEdge(sourceValue: T, destinationValue: T, weight: Int) {}
 
     override fun afterVertexFound(value: T) {}
 }

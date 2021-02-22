@@ -1,8 +1,7 @@
 package com.eipipuz
 
 import com.eipipuz.Swapper.swap
-import com.eipipuz.graph.Graph
-import com.eipipuz.graph.GraphObserver
+import com.eipipuz.graph.*
 
 
 object Searcher {
@@ -187,5 +186,94 @@ object Searcher {
         val startIndex = endIndex - maxLength + 1
 
         return list.subList(startIndex, startIndex + maxLength)
+    }
+
+    private fun <T> findMinEdge(valueToExplicitEdge: Map<T, ExplicitEdge<T>>): ExplicitEdge<T>? =
+        valueToExplicitEdge.minByOrNull { (_, explicitEdge) ->
+            explicitEdge.weight
+        }?.value
+
+    fun <T> findPrimsMinimumSpanningTree(graph: Graph<T>): Graph<T> {
+        val mutableGraph = MutableGraph.createEmpty<T>()
+        val valueToExplicitEdge = mutableMapOf<T, ExplicitEdge<T>>()
+        val valuesToBeAdded = graph.valueToEdges.keys.toMutableSet()
+        val valuesAlreadyInTree = mutableSetOf<T>()
+
+        val firstValue = valuesToBeAdded.first()
+        addFirstValue(graph, mutableGraph, valueToExplicitEdge, valuesToBeAdded, valuesAlreadyInTree, firstValue)
+
+        while (valuesToBeAdded.isNotEmpty()) {
+            val explicitEdge = findMinEdge(valueToExplicitEdge)!!
+            addValueToTree(mutableGraph, valuesToBeAdded, valuesAlreadyInTree, explicitEdge)
+            addCheaperEdges(graph, valueToExplicitEdge, valuesAlreadyInTree, explicitEdge)
+            removeInvalidDestinationEdges(valueToExplicitEdge, explicitEdge.destinationValue)
+        }
+
+        return mutableGraph.toGraph()
+    }
+
+    private fun <T> addFirstValue(
+        graph: Graph<T>,
+        mutableGraph: MutableGraph<T>,
+        valueToExplicitEdge: MutableMap<T, ExplicitEdge<T>>,
+        valuesToBeAdded: MutableSet<T>,
+        valuesAlreadyInTree: MutableSet<T>,
+        firstValue: T
+    ) {
+        val firstEdges = graph.valueToEdges[firstValue]!!
+        for (edge in firstEdges) {
+            if (edge.destinationValue == firstValue) {
+                continue
+            }
+
+            valueToExplicitEdge[edge.destinationValue] = edge.toExplicitEdge(firstValue)
+        }
+
+        mutableGraph.addVertex(firstValue)
+        valuesToBeAdded.remove(firstValue)
+        valuesAlreadyInTree.add(firstValue)
+    }
+
+    private fun <T> addValueToTree(
+        mutableGraph: MutableGraph<T>,
+        valuesToBeAdded: MutableSet<T>,
+        valuesAlreadyInTree: MutableSet<T>,
+        explicitEdge: ExplicitEdge<T>
+    ) {
+        mutableGraph.addVertex(explicitEdge.destinationValue)
+        mutableGraph.addEdge(explicitEdge)
+        valuesToBeAdded.remove(explicitEdge.destinationValue)
+        valuesAlreadyInTree.add(explicitEdge.destinationValue)
+    }
+
+    private fun <T> addCheaperEdges(
+        graph: Graph<T>,
+        valueToExplicitEdge: MutableMap<T, ExplicitEdge<T>>,
+        valuesAlreadyInTree: MutableSet<T>,
+        explicitEdge: ExplicitEdge<T>
+    ) {
+        val newEdges = graph.valueToEdges[explicitEdge.destinationValue]!!
+        for (edge in newEdges) {
+            if (edge.destinationValue in valuesAlreadyInTree) {
+                continue
+            }
+
+            val previousWeight = valueToExplicitEdge[edge.destinationValue]?.weight ?: Int.MAX_VALUE
+            if (edge.weight < previousWeight) {
+                valueToExplicitEdge[edge.destinationValue] = edge.toExplicitEdge(explicitEdge.destinationValue)
+            }
+        }
+    }
+
+    private fun <T> removeInvalidDestinationEdges(
+        valueToExplicitEdge: MutableMap<T, ExplicitEdge<T>>,
+        destinationValue: T
+    ) {
+        val valuesToCheck = valueToExplicitEdge.keys.toSet()
+        for (value in valuesToCheck) {
+            if (value == destinationValue) {
+                valueToExplicitEdge.remove(value)
+            }
+        }
     }
 }

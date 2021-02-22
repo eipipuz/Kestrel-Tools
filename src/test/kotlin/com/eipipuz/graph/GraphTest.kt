@@ -1,5 +1,6 @@
 package com.eipipuz.graph
 
+import com.eipipuz.Searcher
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -176,9 +177,9 @@ class GraphTest {
     }
 
     private fun <T> assertWeightsBetweenVertices(graph: Graph<T>, value1: T, value2: T, expectedWeight: Int) {
-        val edge1 = graph.valueToEdges[value1]?.find { it.otherValue == value2 }!!
+        val edge1 = graph.valueToEdges[value1]?.find { it.destinationValue == value2 }!!
         assertEquals(expectedWeight, edge1.weight)
-        val edge2 = graph.valueToEdges[value2]?.find { it.otherValue == value1 }!!
+        val edge2 = graph.valueToEdges[value2]?.find { it.destinationValue == value1 }!!
         assertEquals(expectedWeight, edge2.weight)
     }
 
@@ -233,6 +234,78 @@ class GraphTest {
 
         val gotGraph = jobGraph.toInvertedGraph()
         assertEquals(invertedGraph, gotGraph)
+    }
+
+    @Test
+    fun testPrimsMinimumSpanningTest() {
+        val someGraph = graph<Int>(isDirected = false) {
+            vertex(0) {
+                weight = 4
+                vertex(1) {
+                    weight = 8
+                    vertex(2) {
+                        weight = 7
+                        vertex(3) {
+                            weight = 9
+                            vertex(4)
+                            weight = 14
+                            vertex(5) {
+                                weight = 10
+                                reference(4)
+                                weight = 4
+                                reference(2)
+                            }
+                        }
+                        weight = 2
+                        vertex(8) {
+                            weight = 6
+                            vertex(6) {
+                                weight = 2
+                                reference(5)
+                            }
+                            weight = 7
+                            vertex(7) {
+                                weight = 1
+                                reference(6)
+                                weight = 11
+                                reference(1)
+                                weight = 8
+                                reference(0)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        val gotGraph = Searcher.findPrimsMinimumSpanningTree(someGraph)
+        val expectedGraph = graph<Int> {
+            vertex(0) {
+                weight = 4
+                vertex(1)
+                weight = 8
+                vertex(7) {
+                    weight = 1
+                    vertex(6) {
+                        weight = 2
+                        vertex(5) {
+                            weight = 4
+                            vertex(2) {
+                                weight = 2
+                                vertex(8)
+                                weight = 7
+                                vertex(3) {
+                                    weight = 9
+                                    vertex(4)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        assertEquals(expectedGraph, gotGraph)
     }
 }
 

@@ -36,29 +36,29 @@ class GraphBuilder<T>(private val isDirected: Boolean) {
         baseValue = previousValue
     }
 
-    fun reference(toValue: T) {
-        val fromValue = baseValue ?: throw IllegalStateException("There's no base vertex")
-        if (toValue !in valueToEdges.keys) {
-            throw IllegalArgumentException("Unknown reference($toValue). [vertex] needs to be called beforehand.")
+    fun reference(destinationValue: T) {
+        val sourceValue = baseValue ?: throw IllegalStateException("There's no base vertex")
+        if (destinationValue !in valueToEdges.keys) {
+            throw IllegalArgumentException("Unknown reference($destinationValue). [vertex] needs to be called beforehand.")
         }
 
-        val edges = valueToEdges[fromValue] ?: emptyList()
-        if (edges.any { it.otherValue == toValue }) {
-            throw IllegalArgumentException("There's already an edge for value($toValue)")
+        val edges = valueToEdges[sourceValue] ?: emptyList()
+        if (edges.any { it.destinationValue == destinationValue }) {
+            throw IllegalArgumentException("There's already an edge for value($destinationValue)")
         }
 
-        addEdge(fromValue, toValue, weight)
+        addEdge(sourceValue, destinationValue, weight)
 
         if (!isDirected) {
-            addEdge(toValue, fromValue, weight)
+            addEdge(destinationValue, sourceValue, weight)
         }
     }
 
-    private fun addEdge(fromValue: T, toValue: T, weight: Int) {
+    private fun addEdge(sourceValue: T, destinationValue: T, weight: Int) {
         if (weight <= 0) throw IllegalStateException("Weight($weight) needs to be positive")
 
-        val edges = valueToEdges[fromValue]!!
-        edges.add(EdgeToVertex(toValue, weight))
+        val edges = valueToEdges[sourceValue]!!
+        edges.add(EdgeToVertex(destinationValue, weight))
 
         numEdges++
     }

@@ -7,7 +7,7 @@ interface AbstractGraph<T> {
     // TODO: Add isUnweighted
 }
 
-class Graph<T>(
+class Graph<T> constructor(
     override val valueToEdges: Map<T, Set<EdgeToVertex<T>>>,
     override val numEdges: Int,
     override val isDirected: Boolean
@@ -15,7 +15,7 @@ class Graph<T>(
 ) : AbstractGraph<T> {
     val initialValues: Set<T> by lazy {
         val receivingValues = valueToEdges.values.flatMap { edges ->
-            edges.map { it.otherValue }
+            edges.map { it.destinationValue }
         }.toSet()
         val allValues = valueToEdges.keys
 
@@ -25,13 +25,13 @@ class Graph<T>(
 
     val valueToIncomingCount: Map<T, Int> by lazy {
         val valueToIncomingCount = mutableMapOf<T, Int>()
-        valueToEdges.forEach { (value, edges)  ->
+        valueToEdges.forEach { (value, edges) ->
             edges.forEach {
-                val count = valueToIncomingCount.getOrDefault(it.otherValue, 0)
-                valueToIncomingCount[it.otherValue] =  count + 1
+                val count = valueToIncomingCount.getOrDefault(it.destinationValue, 0)
+                valueToIncomingCount[it.destinationValue] = count + 1
             }
 
-            valueToIncomingCount.getOrPut(value ) { 0 } // This way every value is guaranteed to have a number.
+            valueToIncomingCount.getOrPut(value) { 0 } // This way every value is guaranteed to have a number.
         }
 
         valueToIncomingCount
@@ -49,9 +49,9 @@ class Graph<T>(
         val invertedGraphValueToEdges = mutableMapOf<T, MutableSet<EdgeToVertex<T>>>()
         valueToEdges.forEach { (value: T, edges: Set<EdgeToVertex<T>>) ->
             edges.forEach { edge ->
-                val invertedEdges = invertedGraphValueToEdges.getOrDefault(edge.otherValue, mutableSetOf())
+                val invertedEdges = invertedGraphValueToEdges.getOrDefault(edge.destinationValue, mutableSetOf())
                 invertedEdges.add(EdgeToVertex(value, edge.weight))
-                invertedGraphValueToEdges[edge.otherValue] = invertedEdges
+                invertedGraphValueToEdges[edge.destinationValue] = invertedEdges
             }
 
             // Needed for initial values. Otherwise the graph will lose knowledge of them.
@@ -89,11 +89,51 @@ class Graph<T>(
     }
 }
 
-class MutableGraph<T>(
+class MutableGraph<T> constructor(
     override val valueToEdges: MutableMap<T, MutableSet<EdgeToVertex<T>>>,
     override var numEdges: Int,
     override val isDirected: Boolean
     // TODO: Add isUnweighted
-) : AbstractGraph<T>
+) : AbstractGraph<T> {
+    companion object {
+        fun <T> createEmpty(isDirected: Boolean = true): MutableGraph<T> {
+            return MutableGraph(mutableMapOf(), 0, isDirected)
+        }
+    }
 
-data class EdgeToVertex<T>(val otherValue: T, val weight: Int)
+    fun addVertex(value: T): MutableGraph<T> {
+        require(value !in valueToEdges) { "Value($value) already part of the mutable graph." }
+
+        valueToEdges[value] = mutableSetOf()
+
+        return this
+    }
+
+    fun addEdge(explicitEdge: ExplicitEdge<T>): MutableGraph<T> =
+        addEdge(explicitEdge.sourceValue, explicitEdge.destinationValue, explicitEdge.weight)
+
+    fun addEdge(sourceValue: T, destinationValue: T, weight: Int = 1, isDirected: Boolean = true): MutableGraph<T> {
+        require(sourceValue in valueToEdges) { "Unknown sourceValue($sourceValue)" }
+        require(destinationValue in valueToEdges) { "Unknown destinationValue($destinationValue)" }
+
+        val fromEdges = valueToEdges[sourceValue]!!
+        fromEdges.add(EdgeToVertex(destinationValue, weight))
+        numEdges++
+
+        if (!isDirected) {
+            val toEdges = valueToEdges[destinationValue]!!
+            toEdges.add(EdgeToVertex(sourceValue, weight))
+            numEdges++
+        }
+
+        return this
+    }
+
+    fun toGraph(): Graph<T> = Graph(valueToEdges, numEdges, isDirected)
+}
+
+data class EdgeToVertex<T>(val destinationValue: T, val weight: Int) {
+    fun toExplicitEdge(sourceValue: T): ExplicitEdge<T> = ExplicitEdge(sourceValue, destinationValue, weight)
+}
+
+data class ExplicitEdge<T>(val sourceValue: T, val destinationValue: T, val weight: Int)
