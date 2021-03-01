@@ -32,6 +32,10 @@ because that would interfere with __Readable__ for now.
 
 ## MultiSet
 
+## DisjointSet
+* Find halves path. This means it isn't eager to move everyone.
+* Union is done per rank. This means not tracking exact size.
+
 ## Graph
 
 # Algorithms
