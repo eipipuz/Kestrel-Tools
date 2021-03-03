@@ -1,7 +1,10 @@
 package com.eipipuz
 
 import com.eipipuz.Swapper.swap
-import com.eipipuz.graph.*
+import com.eipipuz.graph.ExplicitEdge
+import com.eipipuz.graph.Graph
+import com.eipipuz.graph.GraphObserver
+import com.eipipuz.graph.MutableGraph
 
 
 object Searcher {
