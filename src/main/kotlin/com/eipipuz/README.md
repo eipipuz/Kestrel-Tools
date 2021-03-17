@@ -30,6 +30,9 @@ because that would interfere with __Readable__ for now.
 
 ## Queue
 
+## Trie
+At the moment, this is not space optimized.
+
 ## MultiSet
 
 ## DisjointSet
