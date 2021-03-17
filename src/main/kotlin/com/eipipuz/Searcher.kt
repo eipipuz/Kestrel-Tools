@@ -279,4 +279,41 @@ object Searcher {
             }
         }
     }
+
+    fun <T> findMajorityElement(list: List<T>, shouldConfirm: Boolean = true): T? {
+        if (list.isEmpty()) return null
+
+        var candidate: T = list.first()
+        var count = 1
+        for (i in list.indices) {
+            if (i == 0) continue
+
+            if (list[i] == candidate) {
+                count++
+            } else {
+                count--
+            }
+            if (count == 0) {
+                candidate = list[i]
+                count=1
+            }
+        }
+
+        if (shouldConfirm) {
+            val targetForMajority = list.size/2
+            var quantity = 0
+            for (element in list) {
+                if (element == candidate) {
+                    quantity++
+                    if (quantity > targetForMajority) {
+                        return candidate
+                    }
+                }
+            }
+
+            return null
+        }
+
+        return candidate
+    }
 }

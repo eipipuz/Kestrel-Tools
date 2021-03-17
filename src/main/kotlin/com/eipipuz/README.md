@@ -71,6 +71,9 @@ Also, this way we could have a job schedule thing with priorities.
 ### Minimum Spanning Tree
 At this point, we only have Prim's algorithm. Picked over Kruskal's because it seems more natural.
 
+### Find Majority / Boyer-Moore majority vote
+By default, we verify that the candidate is a majority element.
+
 ## Back Trace
 
 # Problems

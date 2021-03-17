@@ -157,4 +157,28 @@ class SearcherTest {
         assertLongestCommonSublist("Hello world!", "98765", "")
         assertLongestCommonSublist("1234567", "200234056", "234")
     }
+
+    private fun assertMajority(list: List<Int>, expectedElement: Int?, shouldConfirm: Boolean = true) {
+        val gotElement = Searcher.findMajorityElement(list, shouldConfirm)
+
+        assertEquals(expectedElement, gotElement)
+    }
+
+    @Test
+    fun testFindMajority() {
+        assertMajority(listOf(), null)
+        assertMajority(listOf(5), 5)
+        assertMajority(listOf(2, 3), null)
+        assertMajority(listOf(11, 4, 11), 11)
+        assertMajority(listOf(1, 1, 2, 1, 2, 3, 3, 2, 2, 2, 1, 2, 2, 3, 2, 2), 2)
+    }
+
+    @Test
+    fun testFindMajorityWithoutConfirmation() {
+        assertMajority(listOf(), null, false)
+        assertMajority(listOf(5), 5, false)
+        assertMajority(listOf(2, 3), 3, false)
+        assertMajority(listOf(11, 4, 11), 11, false)
+        assertMajority(listOf(11, 4, 4, 11), 4, false)
+    }
 }
