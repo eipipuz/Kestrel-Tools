@@ -21,7 +21,7 @@ class SegmentTree private constructor(
 
                     n + m
                 }
-                else -> TODO()
+                else -> throw UnsupportedOperationException()
             }
         }
 
