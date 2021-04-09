@@ -33,6 +33,9 @@ because that would interfere with __Readable__ for now.
 ## Trie
 At the moment, this is not space optimized.
 
+## SegmentTree
+It has a small optimization in `sum(IntRange)` when the match is perfect.
+
 ## MultiSet
 
 ## DisjointSet
