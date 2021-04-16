@@ -5,13 +5,16 @@ class SegmentTree private constructor(
     private val range: IntRange,
     private var sum: Number,
     private val left: SegmentTree?,
-    private val right: SegmentTree?
+    private val right: SegmentTree?,
+    private val op: (Number, Number) -> Number
 ) {
     companion object {
-        fun from(list: List<Number>): SegmentTree {
+        fun sumsFrom(list: List<Number>) = from(list, ::plus)
+
+        fun from(list: List<Number>, op: (Number, Number) -> Number): SegmentTree {
             require(list.isNotEmpty())
 
-            return from(list, 0, list.lastIndex)
+            return from(list, op, 0, list.lastIndex)
         }
 
         private fun plus(n: Number, m: Number): Number {
@@ -25,32 +28,32 @@ class SegmentTree private constructor(
             }
         }
 
-        private fun from(list: List<Number>, start: Int, end: Int): SegmentTree {
+        private fun from(list: List<Number>, op: (Number, Number) -> Number, start: Int, end: Int): SegmentTree {
             val range = start..end
 
             return if (start == end) {
-                SegmentTree(range, list[start], null, null)
+                SegmentTree(range, list[start], null, null, op)
             } else {
                 val middle = start + (end - start) / 2
-                val left = from(list, start, middle)
-                val right = from(list, middle + 1, end)
-                val sum = plus(left.sum, right.sum)
+                val left = from(list, op, start, middle)
+                val right = from(list, op, middle + 1, end)
+                val sum = op(left.sum, right.sum)
 
-                SegmentTree(range, sum, left, right)
+                SegmentTree(range, sum, left, right, op)
             }
         }
     }
 
-    fun sum(range: IntRange): Number {
+    fun op(range: IntRange): Number {
         return when {
             this.range == range -> sum // This isn't strictly needed.
             range.last < this.range.first || range.first > this.range.last -> 0
             this.range.last == this.range.first && this.range.first in range -> sum
             else -> {
-                val leftSum = left?.sum(range) ?: 0
-                val rightSum = right?.sum(range) ?: 0
+                val leftSum = left?.op(range) ?: 0
+                val rightSum = right?.op(range) ?: 0
 
-                plus(leftSum, rightSum)
+                op(leftSum, rightSum)
             }
         }
     }
@@ -60,7 +63,7 @@ class SegmentTree private constructor(
 
         if (at !in range) return
 
-        sum = plus(sum, delta)
+        sum = op(sum, delta)
 
         left?.update(at, delta)
         right?.update(at, delta)
