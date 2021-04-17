@@ -82,3 +82,6 @@ By default, we verify that the candidate is a majority element.
 # Problems
 
 ## Eight Queens
+
+## Shortest Substring
+This is a prototypical window problem.

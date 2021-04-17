@@ -1,5 +1,6 @@
 package com.eipipuz
 
+import com.eipipuz.solver.EightQueensSolver
 import org.junit.Test
 import kotlin.test.*
 

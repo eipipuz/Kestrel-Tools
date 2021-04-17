@@ -1,4 +1,7 @@
-package com.eipipuz
+package com.eipipuz.solver
+
+import com.eipipuz.BackTracer
+import com.eipipuz.Board
 
 class EightQueensSolver(val board: Board = Board()) : BackTracer<Board> {
     override val solutionStatus: BackTracer.SolutionStatus
