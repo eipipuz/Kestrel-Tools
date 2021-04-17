@@ -5,7 +5,7 @@ import com.eipipuz.MultiSet
 
 object ShortestSubstringSolver {
     fun findSubstring(string: String, set: Set<Char>): Pair<Int, Int>? {
-        if (set.size > string.length) return null
+        if (set.size > string.length || string.isEmpty()) return null
         if (set.isEmpty()) return Pair(0, 0)
 
         val charMultiSet = MultiSet<Char>()

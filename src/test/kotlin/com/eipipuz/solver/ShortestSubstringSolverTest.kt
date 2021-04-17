@@ -36,4 +36,11 @@ class ShortestSubstringSolverTest {
 
         assertEquals(Pair(0, 0), result)
     }
+
+    @Test
+    fun testEmptyStringAndEmptySet() {
+        val result = ShortestSubstringSolver.findSubstring("", emptySet())
+
+        assertNull(result)
+    }
 }
