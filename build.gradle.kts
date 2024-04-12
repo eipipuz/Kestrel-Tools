@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val kotlinVersion = "1.4.21"
+val kotlinVersion = "1.9.23"
 
 plugins {
     java
-    kotlin("jvm") version ("1.4.21")
+    kotlin("jvm") version ("1.9.23")
     `maven-publish`
 }
 
