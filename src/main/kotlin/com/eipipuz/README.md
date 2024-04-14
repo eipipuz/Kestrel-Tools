@@ -44,6 +44,11 @@ It has a small optimization in `op(IntRange)` when the match is perfect.
 
 ## Graph
 
+## CircularBuffer
+* Items can be deleted. Delete preserves FIFO policy
+* Read doesn't return twice the item. It knows if there has been no Write.
+* It has a isFull/isEmpty helper.
+
 # Algorithms
 
 ## Sort
